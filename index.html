@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Velha</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #B6B2B1;
+        }
+
+        h2 {
+            margin: 0;
+            color: #000;
+            font-size: 2.5em;
+        }
+
+        .jogadores-container, .tabuleiro-container {
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            width: 600px;
+            text-align: center;
+        }
+
+        .jogadores-container > div {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            margin: 0 20px;
+            font-size: 1.5em;
+            color: #000;
+        }
+
+        .start-button {
+            padding: 12px 25px;
+            font-size: 18px;
+            background-color: #757474;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .start-button:hover {
+            background-color: #636363;
+            transform: translateY(-2px);
+        }
+
+        .caixa {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .linha {
+            display: flex;
+            justify-content: center;
+        }
+
+        .celula {
+            height: 150px;
+            width: 150px;
+            margin: 5px;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 64px;
+            cursor: pointer;
+            border: 2px solid #ced4da;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .celula:hover {
+            background-color: #d6d8db;
+            transform: scale(1.05);
+        }
+
+        .vitoria {
+            background-color: #28a745 !important;
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="jogadores-container">
+        <h2>Jogadores</h2>
+        <div>
+            <h3>Jogador 1: X</h3>
+            <h3>Jogador 2: O</h3>
+        </div>
+        <button class="start-button" onclick="StartGame()">Iniciar</button>
+    </div>
+
+    <div class="tabuleiro-container">
+        <div class="caixa">
+            <div class="linha">
+                <div class="celula" onclick="marcarCelula(this, 0)"></div>
+                <div class="celula" onclick="marcarCelula(this, 1)"></div>
+                <div class="celula" onclick="marcarCelula(this, 2)"></div>
+            </div>
+            <div class="linha">
+                <div class="celula" onclick="marcarCelula(this, 3)"></div>
+                <div class="celula" onclick="marcarCelula(this, 4)"></div>
+                <div class="celula" onclick="marcarCelula(this, 5)"></div>
+            </div>
+            <div class="linha">
+                <div class="celula" onclick="marcarCelula(this, 6)"></div>
+                <div class="celula" onclick="marcarCelula(this, 7)"></div>
+                <div class="celula" onclick="marcarCelula(this, 8)"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var jogador1 = { nome: 'Jogador 1', forma: 'X' };
+        var jogador2 = { nome: 'Jogador 2', forma: 'O' };
+        var jogadorAtual;
+        var tabuleiro = new Array(9);
+
+        function mudarCoresBotoes() {
+            const botoes = document.querySelectorAll('.celula');
+            botoes.forEach(function (botao) {
+                botao.style.backgroundColor = '#DFDFDF';
+                botao.style.color = '#363636'; 
+            });
+        }
+
+        function StartGame() {
+            jogadorAtual = jogador1;
+            tabuleiro.fill(undefined);
+            document.querySelectorAll('.celula').forEach(function (celula) {
+                celula.innerHTML = '';
+                celula.classList.remove('vitoria');
+            });
+            mudarCoresBotoes();
+        }
+
+        function verificarVitoria() {
+            var combinacoes = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            for (var combo of combinacoes) {
+                if (tabuleiro[combo[0]] && tabuleiro[combo[0]] === tabuleiro[combo[1]] && tabuleiro[combo[0]] === tabuleiro[combo[2]]) {
+                    combo.forEach(index => {
+                        document.querySelectorAll('.celula')[index].classList.add('vitoria');
+                    });
+                    alert(jogadorAtual.nome + ' ganhou!');
+                    return true;
+                }
+            }
+
+            if (!tabuleiro.includes(undefined)) {
+                alert('Empate! Tente de novo.');
+                return true;
+            }
+
+            return false;
+        }
+
+        function marcarCelula(cel, pos) {
+            if (!tabuleiro[pos]) {
+                tabuleiro[pos] = jogadorAtual.forma;
+                cel.innerHTML = jogadorAtual.forma;
+
+                if (!verificarVitoria()) {
+                    jogadorAtual = (jogadorAtual === jogador1) ? jogador2 : jogador1;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
